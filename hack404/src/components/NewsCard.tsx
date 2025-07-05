@@ -32,29 +32,42 @@ const NewsCard = ({ article }: { article: Article }) => {
     localStorage.setItem(`disliked-${article.url}`, JSON.stringify(disliked));
   }, [disliked, article.url]);
 
-  const getLikes = async () => {
-    fetch(`${API_BASE_URL}/like-counts?url=${article.url}`)
-      .then((res: Response) => res.json())
-      .then((data: any) => {
-        // console.log("like count", data);
-        setLikes(data);
-      })
-      .catch((err: any) => console.error("Error:", err));
+  const getLikes = async (retries = 1) => {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/like-counts?url=${encodeURIComponent(article.url)}`
+      );
+      const data = await res.json();
 
-    fetch(`${API_BASE_URL}/dislike-counts?url=${article.url}`)
-      .then((res: Response) => res.json())
-      .then((data: any) => {
-        // console.log("dislike count", data);
+      if (data === null && retries > 0) {
+        // retry
+        return await getLikes(retries - 1);
+      }
 
-        setDislikes(data);
-      })
-      .catch((err: any) => console.error("Error:", err));
+      setLikes(data ?? 0);
+    } catch (err) {
+      console.error("Error fetching likes:", err);
+    }
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/dislike-counts?url=${encodeURIComponent(article.url)}`
+      );
+      const data = await res.json();
+      if (data === null && retries > 0) {
+        // retry
+        return await getLikes(retries - 1);
+      }
+
+      setDislikes(data ?? 0);
+    } catch (err) {
+      console.error("Error fetching dislikes:", err);
+    }
   };
 
   useEffect(() => {
     const fetchLikes = async () => {
       try {
-        await getLikes();
+        await getLikes(3);
         console.log("liked", liked, likes, "disliked", disliked, dislikes);
       } catch (err) {
         console.error("Error fetching likes/dislikes:", err);
@@ -198,10 +211,10 @@ const NewsCard = ({ article }: { article: Article }) => {
           </div>
           <div className="flex flex-row gap-3 mt-3">
             <button
-              className="flex flex-row gap-2"
+              className="flex flex-row gap-2 cursor-pointer"
               onClick={(e) => {
                 e.preventDefault();
-                updateLikes(liked); 
+                updateLikes(liked);
                 if (disliked) {
                   updateDislikes(true);
                 }
@@ -216,7 +229,7 @@ const NewsCard = ({ article }: { article: Article }) => {
               <p className="text-[#8A8A8A]">{likes ? likes : 0}</p>
             </button>
             <button
-              className="flex flex-row gap-2"
+              className="flex flex-row gap-2 cursor-pointer"
               onClick={(e) => {
                 e.preventDefault();
                 updateDislikes(disliked);
@@ -231,7 +244,7 @@ const NewsCard = ({ article }: { article: Article }) => {
                 icon={faCaretDown}
                 color={disliked ? "#7DB8AF" : "#8A8A8A"}
               />
-              <p className="text-[#8A8A8A]">{dislikes ? dislikes : 0}</p>
+              <p className="text-[#8A8A8A]">{dislikes ? -dislikes : 0}</p>
               {dislikes}
             </button>
           </div>
