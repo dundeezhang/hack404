@@ -36,11 +36,6 @@ def save_article_to_db_sync(article):
         return result.data[0]["id"] if result.data else None
         
     except Exception as e:
-        error_msg = str(e)
-        if "row-level security policy" in error_msg.lower():
-            print(f"RLS Policy Error: Make sure your Supabase service role key is configured, or disable RLS on the articles table")
-        else:
-            print(f"Error saving article to database: {error_msg}")
         return None
 
 def save_articles_batch(articles):
@@ -52,7 +47,7 @@ def save_articles_batch(articles):
         
         for future in futures:
             try:
-                future.result(timeout=1) 
+                future.result(timeout=2) 
             except Exception:
                 pass 
     
@@ -80,11 +75,6 @@ def get_article_id_by_url(article_url):
         return insert_result.data[0]["id"] if insert_result.data else None
         
     except Exception as e:
-        error_msg = str(e)
-        if "row-level security policy" in error_msg.lower():
-            print(f"RLS Policy Error: Make sure your Supabase service role key is configured, or disable RLS on the articles table")
-        else:
-            print(f"Error searching for article: {error_msg}")
         return None
 
 def update_article_likes(article_url, increment: bool):
@@ -95,13 +85,11 @@ def update_article_likes(article_url, increment: bool):
         # Get article ID from URL
         article_id = get_article_id_by_url(article_url)
         if not article_id:
-            print(f"Could not find or create article for URL: {article_url}")
             return None
         
         current_result = supabase.table("articles").select("likes").eq("id", article_id).execute()
         
         if not current_result.data:
-            print(f"Article with ID {article_id} not found")
             return None
         
         current_likes = current_result.data[0]["likes"]
@@ -111,15 +99,9 @@ def update_article_likes(article_url, increment: bool):
         if update_result.data:
             return new_likes
         else:
-            print(f"Failed to update likes for article {article_id}")
             return None
             
     except Exception as e:
-        error_msg = str(e)
-        if "row-level security policy" in error_msg.lower():
-            print(f"RLS Policy Error: Make sure your Supabase service role key is configured, or disable RLS on the articles table")
-        else:
-            print(f"Error updating article likes: {error_msg}")
         return None
 
 def update_article_dislikes(article_url, increment: bool):
@@ -130,13 +112,11 @@ def update_article_dislikes(article_url, increment: bool):
         # Get article ID from URL
         article_id = get_article_id_by_url(article_url)
         if not article_id:
-            print(f"Could not find or create article for URL: {article_url}")
             return None
         
         current_result = supabase.table("articles").select("dislikes").eq("id", article_id).execute()
         
         if not current_result.data:
-            print(f"Article with ID {article_id} not found")
             return None
         
         current_dislikes = current_result.data[0]["dislikes"]
@@ -146,13 +126,7 @@ def update_article_dislikes(article_url, increment: bool):
         if update_result.data:
             return new_dislikes
         else:
-            print(f"Failed to update dislikes for article {article_id}")
             return None
             
     except Exception as e:
-        error_msg = str(e)
-        if "row-level security policy" in error_msg.lower():
-            print(f"RLS Policy Error: Make sure your Supabase service role key is configured, or disable RLS on the articles table")
-        else:
-            print(f"Error updating article dislikes: {error_msg}")
         return None
