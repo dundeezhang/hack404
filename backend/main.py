@@ -18,13 +18,10 @@ def use_the_api_better():
 def get_news_by_category(category: str = "general", ignore: str = "", search: str = ""):
     """
     Get news from NewsAPI by category with filtering by categories and options
-    
     Args:
-        category: News category (default: "general")
-                 Available categories: business, entertainment, general, health, science, sports, technology
-        ignore: Comma-separated keywords to filter OUT from articles (default: "")
-        search: Comma-separated keywords to filter IN - articles must contain at least one (default: "")
-    
+        category: general, business, entertainment, general, health, science, sports, technology
+        ignore: Comma-separated keywords to filter OUT
+        search: Comma-separated keywords to filter IN
     Returns:
         JSON response with filtered news articles
     """
