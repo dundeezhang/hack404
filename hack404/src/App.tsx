@@ -1,3 +1,4 @@
+import { BrowserRouter as Router, Routes, Route, useParams, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./App.css";
 import Header from "./components/Header";
@@ -5,71 +6,68 @@ import HenYang from "./components/HenYang";
 import NewsCard from "./components/NewsCard";
 import Gradient from "./components/gradient";
 import Ornament from "./components/ornament";
-import { apiService } from "./api";
 import type { Article } from "./types";
 
-function App() {
-  const [active, setActive] = useState("general");
+function CategoryArticles() {
+  const { category } = useParams<{ category: string }>();
   const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // const fetchArticles = async () => {
-  //   try {
-  //     const res = await apiService.getArticles(active);
-  //     setArticles(res);
-  //   } catch {
-  //     console.error("Error fetching articles");
-  //   }
-  // };
+  // Default to "general" if no category in URL
+  const selectedCategory = category ? category.toLowerCase() : "general";
 
-  const fetchArticles = async () => {
-    fetch("http://localhost:8000/news?category=general")
+  useEffect(() => {
+    setLoading(true);
+    fetch(`http://localhost:8000/news?category=${selectedCategory}`)
       .then((res) => res.json())
       .then((data) => {
         const formattedArticles = data.articles.map((article: any) => ({
           url: article.url,
           imageUrl: article.urlToImage || "",
           title: article.title || "",
-          author: article.author || article.source.name || "",
+          author: article.author || article.source?.name || "",
           date: article.publishedAt || "",
-          filters: [active],
+          filters: [selectedCategory],
         }));
         setArticles(formattedArticles);
       })
-      .catch((err) => console.error("Error:", err));
-  };
-
-  useEffect(() => {
-    fetchArticles();
-  }, []);
-
-  useEffect(() => {
-    // console.log("articles",articles);
-  }, [articles]);
+      .finally(() => setLoading(false));
+  }, [selectedCategory]);
 
   return (
-    <>
-      <header
-        className="bg-white h-fit w-full flex top-0 sticky shadow-md z-9999"
-        style={{ fontFamily: "AlumniSans" }}
-      >
+    <div className="flex flex-row flex-wrap gap-5">
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        articles.map((article) => (
+          <NewsCard key={article.title} article={article} />
+        ))
+      )}
+    </div>
+  );
+}
+
+function App() {
+  // You can keep your active state if you want to highlight the current category in Header
+  const [active, setActive] = useState("general");
+
+  return (
+    <Router>
+      <header className="bg-white h-fit w-full flex top-0 sticky shadow-md z-9999" style={{ fontFamily: "AlumniSans" }}>
         <Header active={active} setActive={setActive} />
       </header>
       <main className="p-12">
         <Gradient />
         <div className="flex flex-row justify-between">
-          <div className="flex flex-row flex-wrap gap-5">
-            {articles &&
-              articles.map((article) => {
-                console.log(article.title);
-                return <NewsCard key={article.title} article={article} />;
-              })}
-            {/* <NewsCard /> */}
-          </div>
+          <Routes>
+            <Route path="/" element={<Navigate to="/general" />} />
+            <Route path="/:category" element={<CategoryArticles />} />
+          </Routes>
           <Ornament />
           <HenYang />
         </div>
       </main>
-    </>
+    </Router>
   );
 }
 
