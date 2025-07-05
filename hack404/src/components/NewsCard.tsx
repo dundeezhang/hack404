@@ -9,7 +9,7 @@ import {
 import { useEffect, useState } from "react";
 
 const API_BASE_URL = "http://localhost:8000";
-const NewsCard = ({ article }: { article: Article }) => {
+const NewsCard = ({ article, setUrl }: { article: Article, setUrl: ((param: string) => void) }) => {
   // Total number
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
@@ -109,7 +109,7 @@ const NewsCard = ({ article }: { article: Article }) => {
       try {
         await getLikes(3);
         await getTags();
-        console.log("liked", liked, likes, "disliked", disliked, dislikes);
+        // console.log("liked", liked, likes, "disliked", disliked, dislikes);
       } catch (err) {
         console.error("Error fetching likes/dislikes:", err);
       }
@@ -162,6 +162,7 @@ const NewsCard = ({ article }: { article: Article }) => {
   return (
     <a
       href={article?.url}
+      onClick={(()=>{setUrl(article.url)})}
       target="_blank"
       rel="noopener noreferrer"
       className="transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105"

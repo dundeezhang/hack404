@@ -13,7 +13,7 @@ const HenYang = () => {
   useEffect(() => {
     const getLikes = async (article: Article, retries = 1): Promise<number> => {
       try {
-        console.log("likes", article.link);
+        // console.log("likes", article.link);
 
         const res = await fetch(
           `${API_BASE_URL}/like-counts?url=${article.link}`
@@ -37,13 +37,13 @@ const HenYang = () => {
       try {
         const res = await fetch(`${API_BASE_URL}/top-articles?limit=5`);
         const data = await res.json();
-        console.log("data", data);
+        // console.log("data", data);
 
         const enrichedArticles = [];
 
         for (const article of data) {
           const likes = await getLikes(article, 3);
-          console.log("likes", likes);
+          // console.log("likes", likes);
           enrichedArticles.push({ article, likes });
         }
 
@@ -88,7 +88,7 @@ const HenYang = () => {
           className="text-[#22333B] text-2xl font-bold"
           style={{ fontFamily: "AlumniSans" }}
         >
-          Hen Yang
+          Yang++
         </h1>
       </div>
       <p
