@@ -13,7 +13,7 @@ def filter_articles(articles, ignore_list, search_list, category="general"):
                             "congressman", "congresswoman", "senator", "senators", "house of representatives",
                             "house of rep", "house", "senate", "tariff", "tax", "taxes", "taxation", "taxpayer",
                             "taxpayers", "taxpayer-funded", "taxpayer money", "taxpayer dollars", "taxpayer-funded",
-                            "government-funded", "pentagon", "pentagon budget",]
+                            "government-funded", "pentagon", "pentagon budget", "terrorist", "terrorism", "terrorists", "taliban"]
 
     domains_ignore = ["blabbermouth"]
 
