@@ -35,7 +35,7 @@ function App() {
           </div>
         </nav>
       </header>
-      <main className="p-12">
+      <main className="p-12 flex flex-row flex-wrap gap-5">
         <NewsCard />
         <HenYang />
       </main>
