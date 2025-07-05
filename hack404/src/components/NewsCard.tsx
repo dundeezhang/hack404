@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { Article } from "../types";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
-
 const NewsCard = ({ article }: { article?: Article }) => {
   return (
     <a href={article?.url} target="_blank" rel="noopener noreferrer">
@@ -13,16 +12,18 @@ const NewsCard = ({ article }: { article?: Article }) => {
           <div className="absolute w-full h-full bg-[#D9D9D9] rounded-t-3xl z-0 items-center" />
           {/* Default Image */}
           <img
-            src="/src/assets/fillerimg.png"
+            src={
+              article?.imageUrl ? article.imageUrl : "/src/assets/fillerimg.png"
+            }
             className="mx-auto absolute w-full h-full object-cover rounded-t-3xl z-10"
             alt="Default"
           />
           <div className="absolute bottom-0 w-full z-20 bg-gradient-to-t from-black/70 to-transparent px-4 py-2">
             <h1
-              className="text-white text-3xl"
+              className="text-white text-2xl"
               style={{ fontFamily: "AlumniSans", fontWeight: 700 }}
             >
-              Title title title title title
+              {article?.title}
             </h1>
           </div>
         </div>
@@ -30,12 +31,12 @@ const NewsCard = ({ article }: { article?: Article }) => {
         <div className="p-3">
           <div className="flex flex-row justify-between">
             <div className="flex flex-row gap-3 h-[50] my-auto">
-              <div className="my-auto h-[40px] w-[40px] rounded-full bg-[#22333B]" />
+              {/* <div className="my-auto h-[40px] w-[40px] rounded-full bg-[#22333B]" /> */}
               <h2
                 className="my-auto text-[#22333B]"
                 style={{ fontFamily: "AlumniSans", fontWeight: 600 }}
               >
-                First Last
+                {article?.author ? article?.author : "N/A"}
               </h2>
             </div>
             {/* <div className="flex flex-row justify-between"> */}
@@ -49,7 +50,13 @@ const NewsCard = ({ article }: { article?: Article }) => {
                 className="text-[#8A8A8A] my-auto text-sm"
                 style={{ fontFamily: "AlumniSans", fontWeight: 300 }}
               >
-                8 mins ago
+                {article?.date
+                  ? new Date(article.date).toLocaleDateString(undefined, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })
+                  : ""}
               </p>
             </div>
           </div>

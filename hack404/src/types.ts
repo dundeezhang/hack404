@@ -2,11 +2,8 @@ export interface Article {
   url: string;
   imageUrl: string;
   title: string;
-  author: {
-    first: string;
-    last: string;
-  };
-  date: Date;
+  author: string;
+  date: string;
   filters: string[];
 }
 
