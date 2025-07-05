@@ -5,9 +5,13 @@ def filter_articles(articles, ignore_list, search_list):
     
     for article in articles:
         title = (article.get("title") or "").lower()
+        author = (article.get("author") or "").lower()
+        urlToImage = (article.get("urlToImage") or "").lower()
+        date = (article.get("publishedAt") or "").lower()
+
         description = (article.get("description") or "").lower()
         content = (article.get("content") or "").lower()
-        article_text = f"{title} {description} {content}"
+        article_text = f"{title} {author} {urlToImage} {date} {description} {content}"
         
         if ignore_keywords and any(keyword in article_text for keyword in ignore_keywords):
             continue
