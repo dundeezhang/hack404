@@ -11,13 +11,20 @@ function App() {
   const [active, setActive] = useState("general");
   const [articles, setArticles] = useState<Article[]>([]);
 
+  // const fetchArticles = async () => {
+  //   try {
+  //     const res = await apiService.getArticles(active);
+  //     setArticles(res);
+  //   } catch {
+  //     console.error("Error fetching articles");
+  //   }
+  // };
+
   const fetchArticles = async () => {
-    try {
-      const res = await apiService.getArticles(active);
-      setArticles(res);
-    } catch {
-      console.error("Error fetching articles");
-    }
+    fetch("http://localhost:8000/news?category=general")
+  .then(res => res.json())
+  .then(data => console.log(data))
+  .catch(err => console.error("Error:", err));
   };
 
   useEffect(() => {
