@@ -15,14 +15,28 @@ const NewsCard = ({ article }: { article: Article }) => {
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
   // Whether the user has liked or not
-  const [liked, setLiked] = useState(false);
-  const [disliked, setDisliked] = useState(false);
+  const [liked, setLiked] = useState(() => {
+    const stored = localStorage.getItem(`liked-${article.url}`);
+    return stored ? JSON.parse(stored) : false;
+  });
+  const [disliked, setDisliked] = useState(() => {
+    const stored = localStorage.getItem(`disliked-${article.url}`);
+    return stored ? JSON.parse(stored) : false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(`liked-${article.url}`, JSON.stringify(liked));
+  }, [liked, article.url]);
+
+  useEffect(() => {
+    localStorage.setItem(`disliked-${article.url}`, JSON.stringify(disliked));
+  }, [disliked, article.url]);
 
   const getLikes = async () => {
     fetch(`${API_BASE_URL}/like-counts?url=${article.url}`)
       .then((res: Response) => res.json())
       .then((data: any) => {
-        console.log("like count",data);
+        // console.log("like count", data);
         setLikes(data);
       })
       .catch((err: any) => console.error("Error:", err));
@@ -30,7 +44,7 @@ const NewsCard = ({ article }: { article: Article }) => {
     fetch(`${API_BASE_URL}/dislike-counts?url=${article.url}`)
       .then((res: Response) => res.json())
       .then((data: any) => {
-        console.log("dislike count",data);
+        // console.log("dislike count", data);
 
         setDislikes(data);
       })
@@ -41,21 +55,29 @@ const NewsCard = ({ article }: { article: Article }) => {
     const fetchLikes = async () => {
       try {
         await getLikes();
-        console.log("liked", liked, likes, "disliked", disliked, dislikes)
-        
+        console.log("liked", liked, likes, "disliked", disliked, dislikes);
       } catch (err) {
         console.error("Error fetching likes/dislikes:", err);
       }
     };
     fetchLikes();
-  }, [liked, disliked]);
+  }, []);
 
   const updateLikes = async (like: boolean) => {
     try {
+      // console.log("liked", liked);
       const res = await fetch(
-        `${API_BASE_URL}/update-likes?url=${article.url}&increment=${like}`
-      );
-      setLiked(!liked);
+        `${API_BASE_URL}/update-likes?url=${article.url}&increment=${!like}`
+      )
+        .then((res: Response) => res.json())
+        .then((data: any) => {
+          // console.log("like count", data);
+          setLikes(data);
+        });
+      // if (!res.ok) {
+      //   throw new Error(`Failed to update likes: ${res.statusText}`);
+      // }
+      await setLiked(!liked);
 
       // const data = await res.json();
     } catch (error) {
@@ -65,10 +87,17 @@ const NewsCard = ({ article }: { article: Article }) => {
   const updateDislikes = async (dislike: boolean) => {
     try {
       const res = await fetch(
-        `${API_BASE_URL}/update-dislikes?url=${article.url}&increment=${dislike}`
-      );
-      setDisliked(!disliked);
+        `${API_BASE_URL}/update-dislikes?url=${
+          article.url
+        }&increment=${!dislike}`
+      )
+        .then((res: Response) => res.json())
+        .then((data: any) => {
+          // console.log("dislike count", data);
 
+          setDislikes(data);
+        });
+      await setDisliked(!disliked);
 
       // const data = await res.json();
     } catch (error) {
@@ -77,7 +106,12 @@ const NewsCard = ({ article }: { article: Article }) => {
   };
 
   return (
-    <a href={article?.url} target="_blank" rel="noopener noreferrer" className="transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105">
+    <a
+      href={article?.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105"
+    >
       <div
         className="relative bg-white w-[300px] rounded-3xl shadow-md text-xl"
         style={{ fontFamily: "AlumniSans" }}
@@ -167,7 +201,10 @@ const NewsCard = ({ article }: { article: Article }) => {
               className="flex flex-row gap-2"
               onClick={(e) => {
                 e.preventDefault();
-                updateLikes(liked);
+                updateLikes(liked); 
+                if (disliked) {
+                  updateDislikes(true);
+                }
                 // setLiked(!liked);
               }}
             >
@@ -176,13 +213,16 @@ const NewsCard = ({ article }: { article: Article }) => {
                 icon={faCaretUp}
                 color={liked ? "#7DB8AF" : "#8A8A8A"}
               />
-              <p className="text-[#8A8A8A]">{likes}</p>
+              <p className="text-[#8A8A8A]">{likes ? likes : 0}</p>
             </button>
             <button
               className="flex flex-row gap-2"
               onClick={(e) => {
                 e.preventDefault();
                 updateDislikes(disliked);
+                if (liked) {
+                  updateLikes(true);
+                }
                 // setDisliked(!disliked);
               }}
             >
@@ -191,7 +231,7 @@ const NewsCard = ({ article }: { article: Article }) => {
                 icon={faCaretDown}
                 color={disliked ? "#7DB8AF" : "#8A8A8A"}
               />
-              <p className="text-[#8A8A8A]">{dislikes}</p>
+              <p className="text-[#8A8A8A]">{dislikes ? dislikes : 0}</p>
               {dislikes}
             </button>
           </div>

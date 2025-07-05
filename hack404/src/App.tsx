@@ -60,7 +60,7 @@ function App() {
           <div className="flex flex-row flex-wrap gap-5">
             {articles &&
               articles.map((article) => {
-                console.log(article.title);
+                // console.log(article.title);
                 return <NewsCard key={article.title} article={article} />;
               })}
             {/* <NewsCard /> */}
