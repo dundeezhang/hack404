@@ -24,7 +24,11 @@ function App() {
     fetch("http://localhost:8000/news?category=general")
       .then((res) => res.json())
       .then((data) => {
-        const formattedArticles = data.map((article: any) => ({
+          // console.log("Fetched data:", data);
+
+        const formattedArticles = data.articles.map((article: any) => (
+          {
+          
           url: article.url,
           imageUrl: article.urlToImage || "",
           title: article.title || "",
@@ -32,7 +36,7 @@ function App() {
             first: article.author ? article.author.split(" ")[0] : "",
             last: article.author ? article.author.split(" ").slice(1).join(" ") : "",
           },
-          date: article.date || "",
+          date: article.publishedAt || "",
           filters: [active],
         }));
         setArticles(formattedArticles);
@@ -43,6 +47,11 @@ function App() {
   useEffect(() => {
     fetchArticles();
   }, []);
+
+  useEffect(() => {
+    // console.log("articles",articles);
+  }, [articles]);
+
 
   return (
     <>
@@ -58,13 +67,10 @@ function App() {
           <div className="flex flex-row flex-wrap gap-5">
             {articles &&
               articles.map((article) => {
+                console.log(article.title)
                 return <NewsCard key={article.title} article={article} />;
               })}
-            <NewsCard />
-            <NewsCard />
-            <NewsCard />
-            <NewsCard />
-            <NewsCard />
+            {/* <NewsCard /> */}
           </div>
           <HenYang />
         </div>

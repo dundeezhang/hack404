@@ -6,7 +6,7 @@ export interface Article {
     first: string;
     last: string;
   };
-  date: Date;
+  date: string;
   filters: string[];
 }
 
