@@ -4,7 +4,7 @@ import { faClock } from "@fortawesome/free-solid-svg-icons";
 
 const NewsCard = ({ article }: { article?: Article }) => {
   return (
-    <a href="https://www.google.com" target="_blank" rel="noopener noreferrer">
+    <a href={article?.url} target="_blank" rel="noopener noreferrer">
       <div
         className="relative bg-white w-[300px] rounded-3xl shadow-md text-xl"
         style={{ fontFamily: "AlumniSans" }}

@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from helpers.crawl import crawl_page
 from helpers.crowd import save_articles_batch, get_article_id_by_url, update_article_dislikes, update_article_likes
 from helpers.filter import filter_articles
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 

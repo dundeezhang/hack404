@@ -22,9 +22,22 @@ function App() {
 
   const fetchArticles = async () => {
     fetch("http://localhost:8000/news?category=general")
-  .then(res => res.json())
-  .then(data => console.log(data))
-  .catch(err => console.error("Error:", err));
+      .then((res) => res.json())
+      .then((data) => {
+        const formattedArticles = data.map((article: any) => ({
+          url: article.url,
+          imageUrl: article.urlToImage || "",
+          title: article.title || "",
+          author: {
+            first: article.author ? article.author.split(" ")[0] : "",
+            last: article.author ? article.author.split(" ").slice(1).join(" ") : "",
+          },
+          date: article.date || "",
+          filters: [active],
+        }));
+        setArticles(formattedArticles);
+      })
+      .catch((err) => console.error("Error:", err));
   };
 
   useEffect(() => {
