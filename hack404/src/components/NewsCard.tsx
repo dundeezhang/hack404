@@ -76,9 +76,6 @@ const NewsCard = ({ article }: { article: Article }) => {
     }
   };
 
-import { faClock } from "@fortawesome/free-solid-svg-icons";
-
-const NewsCard = ({ article }: { article?: Article }) => {
   return (
     <a href={article?.url} target="_blank" rel="noopener noreferrer" className="transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105">
       <div
