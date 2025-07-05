@@ -18,7 +18,10 @@ const Header = ({
 
   return (
     <nav className="w-full">
+      <div className="justify-between flex flex-row">
       <div className="flex pl-4 pt-2 pb-2 text-black text-xl ">Hack404</div>
+      <div className="text-black text-xl flex pt-2 pr-5">Exclusively positive news :)</div>
+      </div>
       <hr className="border-gray-300 w-full items-center" />
       <div className="flex pl-4 pt-2 pb-2 text-black text-left">
         <a href="" onClick={() => setActive("general")} className="flex gap-3">
