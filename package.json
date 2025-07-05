@@ -4,7 +4,7 @@
   },
   "scripts": {
     "server": "cd hack404 && npm run dev  ",
-    "client": "cd backend && start  ",
+    "client": "cd backend && uvicorn main:app --reload",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   }
 }
