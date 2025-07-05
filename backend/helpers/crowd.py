@@ -127,3 +127,41 @@ def update_article_dislikes(article_url, increment: bool):
             
     except:
         return None
+    
+def get_like_count(article_url):
+    try:
+        if not article_url:
+            return None
+        
+        article_id = get_article_id_by_url(article_url)
+        if not article_id:
+            return None
+        
+        result = supabase.table("articles").select("likes").eq("id", article_id).execute()
+        
+        if result.data:
+            return result.data[0]["likes"]
+        else:
+            return None
+            
+    except:
+        return None
+    
+def get_dislike_count(article_url):
+    try:
+        if not article_url:
+            return None
+        
+        article_id = get_article_id_by_url(article_url)
+        if not article_id:
+            return None
+        
+        result = supabase.table("articles").select("dislikes").eq("id", article_id).execute()
+        
+        if result.data:
+            return result.data[0]["dislikes"]
+        else:
+            return None
+            
+    except:
+        return None
