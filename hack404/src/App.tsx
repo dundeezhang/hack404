@@ -1,4 +1,5 @@
 import "./App.css";
+import HenYang from "./components/HenYang";
 import NewsCard from "./components/NewsCard";
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
       </header>
       <main className="p-12">
         <NewsCard />
+        <HenYang />
       </main>
     </>
   );

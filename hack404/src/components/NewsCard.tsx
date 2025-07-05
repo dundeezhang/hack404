@@ -6,10 +6,11 @@ const NewsCard = ({ article }: { article?: Article }) => {
   return (
     <div className="relative bg-white w-[300px] rounded-3xl shadow-md text-xl" style={{ fontFamily: 'AlumniSans' }}>
       <div className="relative w-[300px] h-[250px]">
-        <div className="absolute w-full h-full bg-[#D9D9D9] rounded-t-3xl z-0" />
+        <div className="absolute w-full h-full bg-[#D9D9D9] rounded-t-3xl z-0 items-center" />
+        {/* Default Image */}
         <img
           src="/src/assets/fillerimg.png"
-          className="absolute w-full h-full object-cover rounded-t-3xl z-10"
+          className="mx-auto absolute w-full h-full object-cover rounded-t-3xl z-10"
           alt="Default"
         />
         <div className="absolute bottom-0 w-full z-20 bg-gradient-to-t from-black/70 to-transparent px-4 py-2">
