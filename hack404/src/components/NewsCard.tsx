@@ -1,9 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { Article } from "../types";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
+
 const NewsCard = ({ article }: { article?: Article }) => {
   return (
-    <a href={article?.url} target="_blank" rel="noopener noreferrer">
+    <a href={article?.url} target="_blank" rel="noopener noreferrer" className="transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105">
       <div
         className="relative bg-white w-[300px] rounded-3xl shadow-md text-xl"
         style={{ fontFamily: "AlumniSans" }}
@@ -19,35 +20,41 @@ const NewsCard = ({ article }: { article?: Article }) => {
             alt="Default"
           />
           <div className="absolute bottom-0 w-full z-20 bg-gradient-to-t from-black/70 to-transparent px-4 py-2">
-            <h1
-              className="text-white text-2xl"
-              style={{ fontFamily: "AlumniSans", fontWeight: 700 }}
-            >
-              {article?.title}
-            </h1>
+            <div className="infinite-scroll-container">
+              <h1
+                className="infinite-scroll-text delay-500 text-white text-2xl"
+                style={{ fontFamily: "AlumniSans", fontWeight: 700 }}
+                title={article?.title}
+              >
+                {article?.title}
+              </h1>
+            </div>
           </div>
         </div>
 
         <div className="p-3">
-          <div className="flex flex-row justify-between">
-            <div className="flex flex-row gap-3 h-[50] my-auto">
+          <div className="grid grid-cols-3">
+            <div className="col-span-2 gap-3 h-[50] my-auto">
               {/* <div className="my-auto h-[40px] w-[40px] rounded-full bg-[#22333B]" /> */}
-              <h2
-                className="my-auto text-[#22333B]"
-                style={{ fontFamily: "AlumniSans", fontWeight: 600 }}
-              >
-                {article?.author ? article?.author : "N/A"}
-              </h2>
+              <div className="infinite-scroll-container">
+                <h2
+                  className="my-auto text-[#22333B] infinite-scroll-text delay-500"
+                  style={{ fontFamily: "AlumniSans", fontWeight: 400 }}
+                >
+                  {article?.author ? article?.author : "N/A"}
+                </h2>
+              </div>
             </div>
             {/* <div className="flex flex-row justify-between"> */}
-            <div className="flex flex-row gap-2 w-1/2 justify-end">
+            <div className="col-span-1 gap-2 ml-2 align-bottom">
+            <div className="flex flex-row ">
               <FontAwesomeIcon
                 className="my-auto"
                 icon={faClock}
                 color="#8A8A8A"
               />
               <p
-                className="text-[#8A8A8A] my-auto text-sm"
+                className="text-[#8A8A8A] my-auto text-sm "
                 style={{ fontFamily: "AlumniSans", fontWeight: 300 }}
               >
                 {article?.date
@@ -58,6 +65,7 @@ const NewsCard = ({ article }: { article?: Article }) => {
                     })
                   : ""}
               </p>
+              </div>
             </div>
           </div>
           {/* </div> */}
