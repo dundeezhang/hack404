@@ -1,6 +1,7 @@
 import "./App.css";
 import HenYang from "./components/HenYang";
 import NewsCard from "./components/NewsCard";
+import Gradient from "./components/gradient";
 
 function App() {
   return (
@@ -35,7 +36,8 @@ function App() {
           </div>
         </nav>
       </header>
-      <main className="p-12">
+      <main className="p-12 flex flex-row flex-wrap gap-5">
+        <Gradient />
         <NewsCard />
         <HenYang />
       </main>
