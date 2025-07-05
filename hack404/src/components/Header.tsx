@@ -23,7 +23,7 @@ const Header = ({
       <div className="flex pl-4 pt-2 pb-2 text-black text-xl ">Hack404</div>
       <hr className="border-gray-300 w-full items-center" />
       <div className="flex pl-4 pt-2 pb-2 text-black text-left">
-        <a href="" onClick={() => setActive("")} className="flex gap-3">
+        <a href="" onClick={() => setActive("general")} className="flex gap-3">
           <div className="my-auto">
             <img src="/src/assets/yang.png" className="h-12 w-12 mr-2" />
           </div>

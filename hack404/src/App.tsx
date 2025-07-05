@@ -1,12 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Header from "./components/Header";
 import HenYang from "./components/HenYang";
 import NewsCard from "./components/NewsCard";
 import Gradient from "./components/gradient";
+import { apiService } from "./api";
+import type { Article } from "./types";
 
 function App() {
-  const [active, setActive] = useState("");
+  const [active, setActive] = useState("general");
+  const [article, setArticle] = useState<Article[]>([]);
+
+  const fetchArticles = async () => {
+    try {
+      const res = await apiService.getArticles(active);
+      setArticle(res);
+    } catch {
+      console.error("Error fetching articles");
+    }
+  };
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
   return (
     <>
       <header
