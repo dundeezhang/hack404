@@ -9,6 +9,6 @@ export interface Article {
     filters: string[];
 }
 
-export interface RankedArticles {
+export interface ApiCall {
     articles: Article[];
 }
