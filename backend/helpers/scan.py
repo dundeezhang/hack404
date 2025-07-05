@@ -56,7 +56,5 @@ def read_website_content(content):
         processed_content = response.choices[0].message.content
         return processed_content
 
-    except Exception as e:
-        print(f"Error processing content with OpenAI: {e}")
-        # Fallback to returning original content if API call fails
+    except:
         return content
