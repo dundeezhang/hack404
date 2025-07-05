@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 import requests
 import os
 from dotenv import load_dotenv
+from crawl import crawl_page
 
 # Load environment variables
 load_dotenv()
@@ -95,6 +96,17 @@ def get_news_by_category(category: str = "general", ignore: str = "", search: st
         raise HTTPException(status_code=500, detail=f"Error fetching {category} news: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+    
+@app.get("/crawl")
+def crawl(website: str = ""):
+    """
+    Crawl specific website
+    Args:
+        website: website to crawl
+    Returns:
+        string with website body
+    """
+    return crawl_page(website)
 
 # Legacy endpoint for backward compatibility
 @app.get("/get")
