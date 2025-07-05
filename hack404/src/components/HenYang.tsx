@@ -5,7 +5,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { RankedArticles } from "../types";
 
-const HenYang = ({ articles }: { articles: RankedArticles }) => {
+const HenYang = ({ articles }: { articles?: RankedArticles }) => {
   return (
     <div className="w-[250px] bg-white rounded-3xl shadow-md p-3">
       <div className="flex flex-row rounded-3xl gap-3">
