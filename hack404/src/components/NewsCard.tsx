@@ -1,11 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { Article } from "../types";
+import Tag from "./CardTag";
 import {
   faCaretDown,
   faCaretUp,
   faClock,
-  faThumbsDown,
-  faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 
@@ -14,6 +13,8 @@ const NewsCard = ({ article }: { article: Article }) => {
   // Total number
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagsLoading, setTagsLoading] = useState(true);
   // Whether the user has liked or not
   const [liked, setLiked] = useState(() => {
     const stored = localStorage.getItem(`liked-${article.url}`);
@@ -31,6 +32,45 @@ const NewsCard = ({ article }: { article: Article }) => {
   useEffect(() => {
     localStorage.setItem(`disliked-${article.url}`, JSON.stringify(disliked));
   }, [disliked, article.url]);
+
+  const getTags = async () => {
+    try {
+      setTagsLoading(true);
+      const res = await fetch(
+        `${API_BASE_URL}/article-tag?url=${encodeURIComponent(article.url)}`
+      );
+      const data = await res.json();
+
+      if (data && typeof data === "string") {
+        // Split comma-separated tags and filter out empty strings
+        const tagArray = data
+          .split(",")
+          .map((tag: string) => tag.trim())
+          .filter((tag: string) => tag.length > 0);
+        setTags(tagArray);
+      } else {
+        // Fallback to article filters if no tags in database
+        setTags(article.filters || []);
+      }
+    } catch (err) {
+      console.error("Error fetching tags:", err);
+      // Fallback to article filters on error
+      setTags(article.filters || []);
+    } finally {
+      setTagsLoading(false);
+    }
+  };
+
+  const TagSkeleton = () => (
+    <div className="animate-pulse">
+      <div
+        className="rounded-xl border border-[#A9927D] px-2 py-1"
+        style={{ fontFamily: "AlumniSans", fontWeight: 500 }}
+      >
+        <div className="h-5 bg-gray-200 rounded w-12"></div>
+      </div>
+    </div>
+  );
 
   const getLikes = async (retries = 1) => {
     try {
@@ -68,6 +108,7 @@ const NewsCard = ({ article }: { article: Article }) => {
     const fetchLikes = async () => {
       try {
         await getLikes(3);
+        await getTags();
         console.log("liked", liked, likes, "disliked", disliked, dislikes);
       } catch (err) {
         console.error("Error fetching likes/dislikes:", err);
@@ -190,24 +231,15 @@ const NewsCard = ({ article }: { article: Article }) => {
           </div>
           {/* </div> */}
           <div className="mt-5 flex flex-row flex-wrap gap-3">
-            <div
-              className="rounded-xl border border-[#A9927D] px-2 py-1"
-              style={{ fontFamily: "AlumniSans", fontWeight: 500 }}
-            >
-              <p className="text-[#A9927D] text-sm">sports</p>
-            </div>
-            <div
-              className="rounded-xl border border-[#A9927D] px-2 py-1"
-              style={{ fontFamily: "AlumniSans", fontWeight: 500 }}
-            >
-              <p className="text-[#A9927D] text-sm">sports</p>
-            </div>
-            <div
-              className="rounded-xl border border-[#A9927D] px-2 py-1"
-              style={{ fontFamily: "AlumniSans", fontWeight: 500 }}
-            >
-              <p className="text-[#A9927D] text-sm">sports</p>
-            </div>
+            {tagsLoading ? (
+              // Show skeleton loaders while tags are loading
+              <>
+                <TagSkeleton />
+              </>
+            ) : (
+              // Show actual tags once loaded
+              tags.map((tag, index) => <Tag key={index} tag={tag} />)
+            )}
           </div>
           <div className="flex flex-row gap-3 mt-3">
             <button
