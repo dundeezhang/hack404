@@ -96,13 +96,7 @@ def get_news_by_category(category: str = "general", ignore: str = "", search: st
         raise HTTPException(status_code=500, detail=f"Error fetching {category} news: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-# Legacy endpoint for backward compatibility
-@app.get("/get")
-def get_news(ignore: str = "", search: str = ""):
-    """Legacy endpoint - use /news instead"""
-    return get_news_by_category("general", ignore, search)
-
+    
 @app.get("/crawl")
 def crawl(website: str = ""):
     """
@@ -113,3 +107,9 @@ def crawl(website: str = ""):
         string with website body
     """
     return crawl_page(website)
+
+# Legacy endpoint for backward compatibility
+@app.get("/get")
+def get_news(ignore: str = "", search: str = ""):
+    """Legacy endpoint - use /news instead"""
+    return get_news_by_category("general", ignore, search)
