@@ -15,7 +15,8 @@ def filter_articles(articles, ignore_list, search_list, category="general"):
                             "taxpayers", "taxpayer-funded", "taxpayer money", "taxpayer dollars", "taxpayer-funded",
                             "government-funded", "pentagon", "pentagon budget", "terrorist", "terrorism", "terrorists", "taliban"]
 
-    domains_ignore = ["blabbermouth"]
+    domains_ignore = ["blabbermouth", "death", "anti-semitic",
+                      "anti-semitism", "antisemitic", "antisemitism",]
 
     ignore_keywords = ignore_keywords + domains_ignore
 
