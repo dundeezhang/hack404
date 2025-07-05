@@ -3,7 +3,7 @@ import requests
 import os
 from dotenv import load_dotenv
 from helpers.crawl import crawl_page
-from helpers.crowd import save_articles_batch, get_article_id_by_url, update_article_dislikes, update_article_likes
+from helpers.crowd import save_articles_batch, get_article_id_by_url, update_article_dislikes, update_article_likes, get_dislike_count, get_like_count
 from helpers.filter import filter_articles
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -66,8 +66,6 @@ def get_news_by_category(category: str = "general", ignore: str = "", search: st
         news_data = response.json()
         
         filtered_articles = filter_articles(news_data.get("articles", []), ignore_list, search_list)
-        
-        # Save articles to database in background (non-blocking)
         save_articles_batch(filtered_articles)
         
         return {
@@ -128,3 +126,25 @@ def update_dislikes(url: str = '', increment: bool = True):
         int: The updated number of dislikes
     """
     return update_article_dislikes(url, increment)
+
+@app.get("/like-counts")
+def like_counts(url: str):
+    """
+    Get the like count for an article by URL.
+    Args:
+        url (str): The URL of the article to get likes for
+    Returns:
+        int: The number of likes for the article
+    """
+    return get_like_count(url)
+
+@app.get("/dislike-counts")
+def dislike_counts(url: str):
+    """
+    Get the dislike count for an article by URL.
+    Args:
+        url (str): The URL of the article to get dislikes for
+    Returns:
+        int: The number of dislikes for the article
+    """
+    return get_dislike_count(url)
