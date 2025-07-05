@@ -3,7 +3,6 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
 from supabase import create_client, Client
-from helpers.crawl import crawl_page
 
 load_dotenv()
 
@@ -33,6 +32,7 @@ def save_article_to_db_sync(article):
         article_title = article.get("title", "")
         article_author = article.get("author", "")
         article_date = article.get("publishedAt")
+        article_description = article.get("description", "")
         article_publisher = article.get("source", {}).get("name", "")
         article_tags = generate_article_tags(article.get("content", ""))
 
@@ -43,6 +43,7 @@ def save_article_to_db_sync(article):
             "tags": article_tags,
             "title": article_title,
             "author": article_author or article_publisher,
+            "description": article_description,
             "date_written": article_date
         }
 
@@ -225,6 +226,24 @@ def get_top_articles(limit: int):
             "link, title, author, likes"
         ).order("likes", desc=True).limit(limit).execute()
         return result.data if result.data else []
-    except Exception as e:
-        print(f"Error in get_top_articles: {e}")
+    except:
         return []
+
+
+def get_description(url: str):
+    try:
+        if not url:
+            return None
+
+        article_id = get_article_id_by_url(url)
+
+        result = supabase.table("articles").select(
+            "description").eq("id", article_id).execute()
+
+        if result.data:
+            return result.data[0]["description"]
+        else:
+            return None
+
+    except:
+        return None

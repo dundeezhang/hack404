@@ -2,8 +2,8 @@ from fastapi import FastAPI, HTTPException
 import requests
 import os
 from dotenv import load_dotenv
-from helpers.crawl import crawl_page
-from helpers.crowd import save_articles_batch, get_article_id_by_url, update_article_dislikes, update_article_likes, get_dislike_count, get_like_count, get_top_articles
+from helpers.scan import scan_website
+from helpers.database import save_articles_batch, get_article_id_by_url, update_article_dislikes, update_article_likes, get_dislike_count, get_like_count, get_top_articles
 from helpers.filter import filter_articles
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -92,18 +92,6 @@ def get_news_by_category(category: str = "general", ignore: str = "", search: st
             status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-@app.get("/crawl")
-def crawl(website: str = ""):
-    """
-    Crawl specific website
-    Args:
-        website: website to crawl
-    Returns:
-        string with website body
-    """
-    return crawl_page(website)
-
-
 @app.get("/get-article-id")
 def get_article_id(url: str = ''):
     """
@@ -176,3 +164,15 @@ def top_articles_endpoint(limit: int):
         list: A list of top articles sorted by likes
     """
     return get_top_articles(limit)
+
+
+@app.get("/scan-website")
+def scan_website_endpoint(url: str):
+    """
+    Scan a website and return processed content.
+    Args:
+        url (str): The URL of the website to scan
+    Returns:
+        str: The processed content from the website
+    """
+    return scan_website(url)
