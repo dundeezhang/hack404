@@ -1,3 +1,47 @@
+/* Infinite Scroll Animation for Article Titles */
+@keyframes infinite-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.infinite-scroll-container {
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+
+.infinite-scroll-text {
+  display: inline-block;
+  white-space: nowrap;
+  transition: transform 0.3s ease;
+}
+
+.infinite-scroll-text:hover {
+  animation: infinite-scroll 8s linear infinite;
+}
+
+/* Alternative: Smooth scroll on hover */
+.smooth-scroll-hover {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.smooth-scroll-hover:hover .scroll-content {
+  animation: smooth-scroll 6s ease-in-out infinite;
+}
+
+@keyframes smooth-scroll {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-50%);
+  }
+}
 
 
 
