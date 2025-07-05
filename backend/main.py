@@ -2,38 +2,13 @@ from fastapi import FastAPI, HTTPException
 import requests
 import os
 from dotenv import load_dotenv
-from crawl import crawl_page
+from helpers.crawl import crawl_page
+from helpers.crowd import save_articles_batch, get_article_id_by_url, update_article_dislikes, update_article_likes
+from helpers.filter import filter_articles
 
-# Load environment variables
 load_dotenv()
 
 app = FastAPI()
-
-def filter_articles(articles, ignore_list, search_list):
-    """
-    Filter articles by ignore and search criteria
-    """
-    filtered_articles = []
-    ignore_keywords = [keyword.lower() for keyword in ignore_list]
-    search_keywords = [keyword.lower() for keyword in search_list] if search_list else []
-    
-    for article in articles:
-        title = (article.get("title") or "").lower()
-        description = (article.get("description") or "").lower()
-        content = (article.get("content") or "").lower()
-        article_text = f"{title} {description} {content}"
-        
-        # Skip if contains any ignore keywords
-        if ignore_keywords and any(keyword in article_text for keyword in ignore_keywords):
-            continue
-            
-        # If search keywords specified, must contain at least one
-        if search_keywords and not any(keyword in article_text for keyword in search_keywords):
-            continue
-            
-        filtered_articles.append(article)
-    
-    return filtered_articles
 
 @app.get("/")
 def use_the_api_better():
@@ -43,13 +18,10 @@ def use_the_api_better():
 def get_news_by_category(category: str = "general", ignore: str = "", search: str = ""):
     """
     Get news from NewsAPI by category with filtering by categories and options
-    
     Args:
-        category: News category (default: "general")
-                 Available categories: business, entertainment, general, health, science, sports, technology
-        ignore: Comma-separated keywords to filter OUT from articles (default: "")
-        search: Comma-separated keywords to filter IN - articles must contain at least one (default: "")
-    
+        category: general, business, entertainment, general, health, science, sports, technology
+        ignore: Comma-separated keywords to filter OUT
+        search: Comma-separated keywords to filter IN
     Returns:
         JSON response with filtered news articles
     """
@@ -84,6 +56,9 @@ def get_news_by_category(category: str = "general", ignore: str = "", search: st
         
         filtered_articles = filter_articles(news_data.get("articles", []), ignore_list, search_list)
         
+        # Save articles to database in background (non-blocking)
+        save_articles_batch(filtered_articles)
+        
         return {
             "status": "success",
             "category": category,
@@ -108,8 +83,37 @@ def crawl(website: str = ""):
     """
     return crawl_page(website)
 
-# Legacy endpoint for backward compatibility
-@app.get("/get")
-def get_news(ignore: str = "", search: str = ""):
-    """Legacy endpoint - use /news instead"""
-    return get_news_by_category("general", ignore, search)
+@app.get("/get-article-id")
+def get_article_id(url: str = ''):
+    """
+    Search for an article by URL and return its UUID/ID.
+    Args:
+        article_url (str): The URL of the article to search for 
+    Returns:
+        str: The UUID/ID of the article if found
+    """
+    return get_article_id_by_url(url)
+
+@app.get("/update-likes")
+def update_likes(url: str = '', increment: bool = True):
+    """
+    Update likes for an article by URL.
+    Args:
+        url (str): The URL of the article to update likes for
+        increment (bool): Whether to increment or decrement likes (default: True)
+    Returns:
+        int: The updated number of likes
+    """
+    return update_article_likes(url, increment)
+
+@app.get("/update-dislikes")
+def update_dislikes(url: str = '', increment: bool = True):
+    """
+    Update dislikes for an article by URL.
+    Args:
+        url (str): The URL of the article to update dislikes for
+        increment (bool): Whether to increment or decrement dislikes (default: True)
+    Returns:
+        int: The updated number of dislikes
+    """
+    return update_article_dislikes(url, increment)
