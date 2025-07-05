@@ -1,4 +1,3 @@
-import { useState } from "react";
 
 const Header = ({
   active,
@@ -7,7 +6,6 @@ const Header = ({
   active: string;
   setActive: (status: string) => void;
 }) => {
-  //   const [active, setActive] = useState("");
 
   const links = [
     "Politics",
