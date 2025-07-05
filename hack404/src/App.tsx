@@ -34,7 +34,7 @@ function App() {
           </div>
         </nav>
       </header>
-      <main className="p-2">
+      <main className="p-12">
         <NewsCard />
       </main>
     </>
