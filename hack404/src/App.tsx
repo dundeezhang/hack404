@@ -28,7 +28,7 @@ function App() {
           url: article.url,
           imageUrl: article.urlToImage || "",
           title: article.title || "",
-          author: article.author || "",
+          author: article.author || article.source.name || "",
           date: article.publishedAt || "",
           filters: [active],
         }));
