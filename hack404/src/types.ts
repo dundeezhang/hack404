@@ -8,3 +8,7 @@ export interface Article {
     date: Date;
     filters: string[];
 }
+
+export interface ApiCall {
+    articles: Article[];
+}
