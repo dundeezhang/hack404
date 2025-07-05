@@ -27,24 +27,15 @@ def read_website_content(content):
 
         Search the web for credible, relevant links that either:
 
-        Support the claims
-
-        Provide background information
-
-        Show public reactions or follow-ups
-
-        Return a list of URLs along with the website name.
+        Return a list of URLs along with the website name. Provide up to 4 links.
 
         DO NOT HALLUCINATE OR MAKE UP LINKS. DO NOT DO ANYTHING OUTSIDE OF THIS TASK.
 
         format the output as a JSON array of objects with the following structure:
-        [
-            bracket
-                "url": "https://example.com",
-                "name": "Example Website"
-            closing bracket,
-            ...
-        ]
+        [bracket "url": "https://example.com", "name": "Example Website" closing bracket, ... ]
+
+        DO NOT DO THE BACKSLASH CHARACTER ESCAPING. DO NOT ADD ANY EXTRA TEXT OR EXPLANATIONS.
+        DO NOT ADD ANYTHING ELSE OUTSIDE OF THE JSON ARRAY.
 
         Website content:
         {content}
