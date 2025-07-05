@@ -12,18 +12,20 @@ load_dotenv()
 app = FastAPI()
 
 app.add_middleware(
-   CORSMiddleware,
-   allow_origins=[
-       "http://localhost:5173",  # Local development server
-   ],
-   allow_credentials=True,
-   allow_methods=["*"],
-   allow_headers=["*"],
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",  # Local development server
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
 
 @app.get("/")
 def use_the_api_better():
     return {"get better": "dundee"}
+
 
 @app.get("/news")
 def get_news_by_category(category: str = "general", ignore: str = "", search: str = ""):
@@ -37,37 +39,43 @@ def get_news_by_category(category: str = "general", ignore: str = "", search: st
         JSON response with filtered news articles
     """
     api_key = os.getenv("NEWSAPI_KEY")
-    
+
     if not api_key:
-        raise HTTPException(status_code=500, detail="NewsAPI key not configured")
-    
+        raise HTTPException(
+            status_code=500, detail="NewsAPI key not configured")
+
     # Validate category
-    valid_categories = ["business", "entertainment", "general", "health", "science", "sports", "technology"]
+    valid_categories = ["business", "entertainment",
+                        "general", "health", "science", "sports", "technology"]
     if category not in valid_categories:
-        raise HTTPException(status_code=400, detail=f"Invalid category. Must be one of: {', '.join(valid_categories)}")
-    
-    ignore_list = [keyword.strip() for keyword in ignore.split(",") if keyword.strip()]
-    search_list = [keyword.strip() for keyword in search.split(",") if keyword.strip()]
-    
+        raise HTTPException(
+            status_code=400, detail=f"Invalid category. Must be one of: {', '.join(valid_categories)}")
+
+    ignore_list = [keyword.strip()
+                   for keyword in ignore.split(",") if keyword.strip()]
+    search_list = [keyword.strip()
+                   for keyword in search.split(",") if keyword.strip()]
+
     url = "https://newsapi.org/v2/top-headlines"
-    
+
     params = {
         "apiKey": api_key,
         "pageSize": 100,
         "country": "us",
         "category": category,
-        "language": "en" 
+        "language": "en"
     }
-    
+
     try:
         response = requests.get(url, params=params)
         response.raise_for_status()
-        
+
         news_data = response.json()
-        
-        filtered_articles = filter_articles(news_data.get("articles", []), ignore_list, search_list)
+
+        filtered_articles = filter_articles(
+            news_data.get("articles", []), ignore_list, search_list)
         save_articles_batch(filtered_articles)
-        
+
         return {
             "status": "success",
             "category": category,
@@ -75,12 +83,15 @@ def get_news_by_category(category: str = "general", ignore: str = "", search: st
             "originalTotalResults": news_data.get("totalResults", 0),
             "articles": filtered_articles
         }
-        
+
     except requests.exceptions.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching {category} news: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching {category} news: {str(e)}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-    
+        raise HTTPException(
+            status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
 @app.get("/crawl")
 def crawl(website: str = ""):
     """
@@ -92,6 +103,7 @@ def crawl(website: str = ""):
     """
     return crawl_page(website)
 
+
 @app.get("/get-article-id")
 def get_article_id(url: str = ''):
     """
@@ -102,6 +114,7 @@ def get_article_id(url: str = ''):
         str: The UUID/ID of the article if found
     """
     return get_article_id_by_url(url)
+
 
 @app.get("/update-likes")
 def update_likes(url: str = '', increment: bool = True):
@@ -115,6 +128,7 @@ def update_likes(url: str = '', increment: bool = True):
     """
     return update_article_likes(url, increment)
 
+
 @app.get("/update-dislikes")
 def update_dislikes(url: str = '', increment: bool = True):
     """
@@ -127,6 +141,7 @@ def update_dislikes(url: str = '', increment: bool = True):
     """
     return update_article_dislikes(url, increment)
 
+
 @app.get("/like-counts")
 def like_counts(url: str):
     """
@@ -137,6 +152,7 @@ def like_counts(url: str):
         int: The number of likes for the article
     """
     return get_like_count(url)
+
 
 @app.get("/dislike-counts")
 def dislike_counts(url: str):
