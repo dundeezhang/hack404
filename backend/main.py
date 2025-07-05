@@ -63,7 +63,7 @@ def get_news_by_category(category: str = "general", ignore: str = "", search: st
         "pageSize": 100,
         "country": "us",
         "category": category,
-        "language": "en"
+        "language": "en",
     }
 
     try:
@@ -73,7 +73,7 @@ def get_news_by_category(category: str = "general", ignore: str = "", search: st
         news_data = response.json()
 
         filtered_articles = filter_articles(
-            news_data.get("articles", []), ignore_list, search_list)
+            news_data.get("articles", []), ignore_list, search_list, category)
         save_articles_batch(filtered_articles)
 
         return {
