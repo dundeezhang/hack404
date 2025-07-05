@@ -37,7 +37,9 @@ function CategoryArticles() {
   return (
     <div className="flex flex-row flex-wrap gap-5">
       {loading ? (
-        <div>Loading...</div>
+          <div className="w-[630px] min-h-[400px] flex items-center justify-center">
+        <img src="src/assets/load.png" className="animate-spin align-middle h-10 w-10"/>
+        </div>
       ) : (
         articles.map((article) => (
           <NewsCard key={article.title} article={article} />
