@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import HenYang from "./components/HenYang";
 import NewsCard from "./components/NewsCard";
 import Gradient from "./components/gradient";
+import Ornament from "./components/ornament";
 import { apiService } from "./api";
 import type { Article } from "./types";
 
@@ -64,6 +65,7 @@ function App() {
               })}
             {/* <NewsCard /> */}
           </div>
+          <Ornament />
           <HenYang />
         </div>
       </main>
