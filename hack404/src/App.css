@@ -43,5 +43,24 @@
   }
 }
 
+.animation-delay-1s {
+  animation-delay: 100ms;
+}
+
+.animation-delay-2s {
+  animation-delay: 150ms;
+}
+
+.animation-delay-3s {
+  animation-delay: 200ms;
+}
+
+.animation-delay-4s {
+  animation-delay: 250ms;
+}
+
+.animation-delay-5s {
+  animation-delay: 300ms;
+}
 
 

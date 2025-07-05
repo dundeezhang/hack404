@@ -46,25 +46,25 @@ const NewsCard = ({ article }: { article?: Article }) => {
               </div>
             </div>
             {/* <div className="flex flex-row justify-between"> */}
-            <div className="col-span-1 gap-2 ml-2 align-bottom">
-            <div className="flex flex-row ">
-              <FontAwesomeIcon
-                className="my-auto"
-                icon={faClock}
-                color="#8A8A8A"
-              />
-              <p
-                className="text-[#8A8A8A] my-auto text-sm "
-                style={{ fontFamily: "AlumniSans", fontWeight: 300 }}
-              >
-                {article?.date
-                  ? new Date(article.date).toLocaleDateString(undefined, {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })
-                  : ""}
-              </p>
+            <div className="col-span-1 flex items-center justify-end">
+              <div className="flex flex-row items-center">
+                <FontAwesomeIcon
+                  className="mr-2"
+                  icon={faClock}
+                  color="#8A8A8A"
+                />
+                <p
+                  className="text-[#8A8A8A] text-sm"
+                  style={{ fontFamily: "AlumniSans", fontWeight: 300 }}
+                >
+                  {article?.date
+                    ? new Date(article.date).toLocaleDateString(undefined, {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })
+                    : ""}
+                </p>
               </div>
             </div>
           </div>
