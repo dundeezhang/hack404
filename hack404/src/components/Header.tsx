@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 const Header = ({
   active,
@@ -8,23 +9,24 @@ const Header = ({
 }) => {
 
   const links = [
-    "Politics",
-    "Environment",
-    "Community",
-    "Science",
-    "Health",
-    "Education",
+    "General", 
+    "Business", 
+    "Entertainment",                   
+    "Health", 
+    "Science", 
+    "Sports", 
+    "Technology"
   ];
 
   return (
     <nav className="w-full">
       <div className="justify-between flex flex-row">
-      <div className="flex pl-4 pt-2 pb-2 text-black text-xl ">Hack404</div>
-      <div className="text-black text-xl flex pt-2 pr-5">Exclusively positive news :)</div>
+      <div className="flex pl-4 pt-2 pb-2 bg-gradient-to-r from-[#83b3ce] to-[#2CAA2F] text-transparent bg-clip-text text-xl ">Hack404</div>
+      <div className="bg-gradient-to-r from-[#83b3ce] to-[#2CAA2F] text-xl flex pt-2 pr-5 text-transparent bg-clip-text">Exclusively positive news :)</div>
       </div>
       <hr className="border-gray-300 w-full items-center" />
       <div className="flex pl-4 pt-2 pb-2 text-black text-left">
-        <a href="" onClick={() => setActive("general")} className="flex gap-3">
+      <Link to="/general" onClick={() => setActive("general")} className="flex gap-3">
           <div className="my-auto">
             <img src="/src/assets/yang.png" className="h-12 w-12 mr-2" />
           </div>
@@ -32,20 +34,20 @@ const Header = ({
             <div className="font-bold text-3xl">YangNews</div>
             <p className="text-lg">Find Yang daily</p>
           </div>
-        </a>
+        </Link>
 
         <div className="ml-8 flex items-center space-x-8 text-xl">
           {links.map((link) => (
-            <a
-              key={link}
-              href="#"
-              onClick={() => setActive(link)}
-              className={`text-gray-900 px-2 py-1 rounded ${
-                active === link ? "bg-gray-200" : ""
-              }`}
-            >
-              {link}
-            </a>
+            <Link
+            key={link}
+            to={`/${link.toLowerCase()}`}
+            onClick={() => setActive(link.toLowerCase())}
+            className={`text-gray-900 px-2 py-1 rounded ${
+              active === link.toLowerCase() ? "bg-gradient-to-r from-[#c6e5e9] to-[#c6e9c6]" : ""
+            }`}
+          >
+            {link}
+          </Link>
           ))}
         </div>
       </div>
