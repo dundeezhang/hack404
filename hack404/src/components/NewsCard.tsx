@@ -53,10 +53,10 @@ const NewsCard = ({ article }: { article: Article }) => {
         `${API_BASE_URL}/dislike-counts?url=${encodeURIComponent(article.url)}`
       );
       const data = await res.json();
-      if (data === null && retries > 0) {
-        // retry
-        return await getLikes(retries - 1);
-      }
+      // if (data === null && retries > 0) {
+      //   // retry
+      //   return await getLikes(retries - 1);
+      // }
 
       setDislikes(data ?? 0);
     } catch (err) {
