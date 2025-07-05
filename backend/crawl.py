@@ -24,10 +24,3 @@ def crawl_page(url):
         
     finally:
         driver.quit()
-
-# Example usage
-if __name__ == "__main__":
-    content = crawl_page("http://selenium.dev")
-    print(f"Page content length: {len(content)} characters")
-    print("First 200 characters:")
-    print(content[:1000])
