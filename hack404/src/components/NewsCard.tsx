@@ -10,7 +10,7 @@ const NewsCard = ({ article }: { article?: Article }) => {
         {/* Default Image */}
         <img
           src="/src/assets/fillerimg.png"
-          className="mx-auto absolute w-[80%] object-cover rounded-t-3xl z-10 p-2"
+          className="mx-auto absolute w-full h-full object-cover rounded-t-3xl z-10"
           alt="Default"
         />
         <div className="absolute bottom-0 w-full z-20 bg-gradient-to-t from-black/70 to-transparent px-4 py-2">
