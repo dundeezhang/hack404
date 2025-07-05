@@ -35,7 +35,7 @@ const NewsCard = ({ article }: { article?: Article }) => {
         </div>
         {/* </div> */}
         <div className="mt-5 flex flex-row flex-wrap gap-3">
-          <div className="rounded-xl border border-[#A9927D] p-2">
+          <div className="rounded-xl border border-[#A9927D] p-2 font-light">
             <p className="text-[#A9927D] text-sm">sports</p>
           </div>
           <div className="rounded-xl border border-[#A9927D] p-2">
