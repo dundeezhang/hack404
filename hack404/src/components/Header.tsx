@@ -5,7 +5,7 @@ const Header = ({
   setActive,
 }: {
   active: string;
-  setActive: (string) => void;
+  setActive: (status: string) => void;
 }) => {
   //   const [active, setActive] = useState("");
 
