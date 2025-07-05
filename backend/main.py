@@ -2,38 +2,13 @@ from fastapi import FastAPI, HTTPException
 import requests
 import os
 from dotenv import load_dotenv
-from crawl import crawl_page
+from helpers.crawl import crawl_page
+from helpers.crowd import save_articles_batch
+from helpers.filter import filter_articles
 
-# Load environment variables
 load_dotenv()
 
 app = FastAPI()
-
-def filter_articles(articles, ignore_list, search_list):
-    """
-    Filter articles by ignore and search criteria
-    """
-    filtered_articles = []
-    ignore_keywords = [keyword.lower() for keyword in ignore_list]
-    search_keywords = [keyword.lower() for keyword in search_list] if search_list else []
-    
-    for article in articles:
-        title = (article.get("title") or "").lower()
-        description = (article.get("description") or "").lower()
-        content = (article.get("content") or "").lower()
-        article_text = f"{title} {description} {content}"
-        
-        # Skip if contains any ignore keywords
-        if ignore_keywords and any(keyword in article_text for keyword in ignore_keywords):
-            continue
-            
-        # If search keywords specified, must contain at least one
-        if search_keywords and not any(keyword in article_text for keyword in search_keywords):
-            continue
-            
-        filtered_articles.append(article)
-    
-    return filtered_articles
 
 @app.get("/")
 def use_the_api_better():
@@ -84,6 +59,9 @@ def get_news_by_category(category: str = "general", ignore: str = "", search: st
         
         filtered_articles = filter_articles(news_data.get("articles", []), ignore_list, search_list)
         
+        # Save articles to database in background (non-blocking)
+        save_articles_batch(filtered_articles)
+        
         return {
             "status": "success",
             "category": category,
@@ -107,9 +85,3 @@ def crawl(website: str = ""):
         string with website body
     """
     return crawl_page(website)
-
-# Legacy endpoint for backward compatibility
-@app.get("/get")
-def get_news(ignore: str = "", search: str = ""):
-    """Legacy endpoint - use /news instead"""
-    return get_news_by_category("general", ignore, search)
