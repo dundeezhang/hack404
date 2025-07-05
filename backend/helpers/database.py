@@ -29,12 +29,17 @@ def save_article_to_db_sync(article):
             return existing.data[0]["id"]
 
         # Extract article data from the article object
+        search_content = article.get(
+            "content", "") + article.get("description", "") + article.get("category", "") + \
+            article.get("title", "") + article.get("author", "") + \
+            article.get("source", {}).get("name", "") + \
+            article.get("publishedAt", "")
         article_title = article.get("title", "")
         article_author = article.get("author", "")
         article_date = article.get("publishedAt")
         article_description = article.get("description", "")
         article_publisher = article.get("source", {}).get("name", "")
-        article_tags = generate_article_tags(article.get("content", ""))
+        article_tags = generate_article_tags(search_content)
 
         article_data = {
             "link": article_url,
@@ -194,28 +199,24 @@ def generate_article_tags(body: str):
     #    words = words[:200]
 
     tags = {"science": False, "technology": False,
-            "health": False, "business": False, "entertainment": False}
+            "health": False, "business": False, "entertainment": False, "general": False}
     for word in words:
         word_lower = word.lower()
         tag_keywords = {
-            "science": ["science"],
-            "technology": ["tech", "technology", "technologies", "technological"],
-            "health": ["health"],
-            "business": ["business"],
-            "entertainment": ["entertainment"],
-            'discovery': ["discovery", "discoveries"],
-            'innovation': ["innovation", "innovations"],
-            'research': ["research", "studies", "study"],
-            'breakthrough': ["breakthrough", "breakthroughs"],
-            'advancement': ["advancement", "advancements"],
-            'development': ["development", "developments"],
-            'improvement': ["improvement", "improvements"],
-            'finding': ["finding", "findings"],
+            "science": ["science", "discovery", "discoveries", "scientific", "scientists", "research", "study", "studies", "experiment", "laboratory", "physics", "chemistry", "biology", "astronomy", "climate", "environment", "space", "nasa", "breakthrough", "innovation", "genetics", "evolution", "quantum", "molecule", "atom", "ecosystem", "paleontology", "archaeology", "geology", "meteorology", "oceanography"],
+            "technology": ["tech", "technology", "technologies", "technological", "gadget", "software", "hardware", "ai", "artificial intelligence", "machine learning", "blockchain", "cryptocurrency", "bitcoin", "startup", "silicon valley", "computer", "smartphone", "app", "application", "coding", "programming", "developer", "internet", "web", "digital", "cyber", "robot", "automation", "5g", "cloud", "data", "algorithm", "virtual reality", "augmented reality", "iot", "cybersecurity"],
+            "health": ["health", "healthy", "healthcare", "wellness", "medical", "medicine", "disease", "diseases", "virus", "pandemic", "epidemic", "hospital", "doctor", "patient", "treatment", "therapy", "vaccine", "vaccination", "mental health", "fitness", "nutrition", "diet", "exercise", "surgery", "cancer", "diabetes", "heart", "brain", "pharmaceutical", "drug", "medication", "clinical", "diagnosis", "symptoms", "covid", "coronavirus", "flu", "infection"],
+            "business": ["business", "economy", "economic", "economics", "financial", "finance", "market", "stock", "investment", "investor", "trading", "company", "corporation", "startup", "entrepreneur", "ceo", "revenue", "profit", "earnings", "growth", "merger", "acquisition", "ipo", "bankruptcy", "recession", "inflation", "gdp", "unemployment", "jobs", "employment", "industry", "manufacturing", "retail", "consumer", "sales", "marketing", "brand"],
+            "entertainment": ["entertainment", "entertain", "entertaining", "entertains", "entertained", "showbiz", "show business", "movie", "film", "cinema", "tv", "television", "series", "netflix", "disney", "hollywood", "celebrity", "actor", "actress", "director", "music", "musician", "singer", "album", "concert", "festival", "gaming", "video games", "sports", "football", "basketball", "soccer", "olympics", "award", "oscar", "grammy", "streaming", "podcast"],
+            "innovation": ["innovation", "innovations", "innovative", "breakthrough", "revolutionary", "cutting-edge", "pioneering", "groundbreaking", "advancement", "progress", "invention", "patent", "prototype", "disruptive", "emerging", "next-generation", "state-of-the-art", "novel", "creative", "solution"],
         }
 
         for tag, keywords in tag_keywords.items():
             if any(keyword in word_lower for keyword in keywords):
                 tags[tag] = True
+
+    if not any(tags.values()):
+        tags["general"] = True
 
     return ",".join([f"{key}" for key, value in tags.items() if value])
 
@@ -242,6 +243,25 @@ def get_description(url: str):
 
         if result.data:
             return result.data[0]["description"]
+        else:
+            return None
+
+    except:
+        return None
+
+
+def get_article_tag(url: str):
+    try:
+        if not url:
+            return None
+
+        article_id = get_article_id_by_url(url)
+
+        result = supabase.table("articles").select(
+            "tags").eq("id", article_id).execute()
+
+        if result.data:
+            return result.data[0]["tags"]
         else:
             return None
 

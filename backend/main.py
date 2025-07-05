@@ -3,7 +3,7 @@ import requests
 import os
 from dotenv import load_dotenv
 from helpers.scan import scan_website
-from helpers.database import save_articles_batch, get_article_id_by_url, update_article_dislikes, update_article_likes, get_dislike_count, get_like_count, get_top_articles
+from helpers.database import save_articles_batch, get_article_id_by_url, update_article_dislikes, update_article_likes, get_dislike_count, get_like_count, get_top_articles, get_article_tag
 from helpers.filter import filter_articles
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -176,3 +176,15 @@ def scan_website_endpoint(url: str):
         str: The processed content from the website
     """
     return scan_website(url)
+
+
+@app.get("/article-tag")
+def article_tag(url: str):
+    """
+    Get the tag for an article by URL.
+    Args:
+        url (str): The URL of the article to get the tag for
+    Returns:
+        str: The tag of the article if found, otherwise None
+    """
+    return get_article_tag(url)
