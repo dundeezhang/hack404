@@ -3,6 +3,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
 from supabase import create_client, Client
+from helpers.crawl import crawl_page
 
 load_dotenv()
 
@@ -33,12 +34,13 @@ def save_article_to_db_sync(article):
         article_author = article.get("author", "")
         article_date = article.get("publishedAt")
         article_publisher = article.get("source", {}).get("name", "")
+        article_tags = generate_article_tags(article.get("content", ""))
 
         article_data = {
             "link": article_url,
             "likes": 0,
             "dislikes": 0,
-            "tags": "",
+            "tags": article_tags,
             "title": article_title,
             "author": article_author or article_publisher,
             "date_written": article_date
@@ -186,7 +188,43 @@ def get_dislike_count(article_url):
 
 def generate_article_tags(body: str):
     words = body.split()
-    tags = {"science": True, "technology": True, "health": True,
-            "politics": True, "business": True, "entertainment": True}
 
-    return ", ".join(tags)
+    # if len(words) > 200:
+    #    words = words[:200]
+
+    tags = {"science": False, "technology": False,
+            "health": False, "business": False, "entertainment": False}
+    for word in words:
+        word_lower = word.lower()
+        tag_keywords = {
+            "science": ["science"],
+            "technology": ["tech", "technology, technologies", "technological"],
+            "health": ["health"],
+            "business": ["business"],
+            "entertainment": ["entertainment"],
+            'discovery': ["discovery", "discoveries"],
+            'innovation': ["innovation", "innovations"],
+            'research': ["research", "studies", "study"],
+            'breakthrough': ["breakthrough", "breakthroughs"],
+            'advancement': ["advancement", "advancements"],
+            'development': ["development", "developments"],
+            'improvement': ["improvement", "improvements"],
+            'finding': ["finding", "findings"],
+        }
+
+        for tag, keywords in tag_keywords.items():
+            if any(keyword in word_lower for keyword in keywords):
+                tags[tag] = True
+
+    return ",".join([f"{key}" for key, value in tags.items() if value])
+
+
+def get_top_articles(limit: int):
+    try:
+        result = supabase.table("articles").select(
+            "link, title, author, likes"
+        ).order("likes", desc=True).limit(limit).execute()
+        return result.data if result.data else []
+    except Exception as e:
+        print(f"Error in get_top_articles: {e}")
+        return []

@@ -3,7 +3,7 @@ import requests
 import os
 from dotenv import load_dotenv
 from helpers.crawl import crawl_page
-from helpers.crowd import save_articles_batch, get_article_id_by_url, update_article_dislikes, update_article_likes, get_dislike_count, get_like_count
+from helpers.crowd import save_articles_batch, get_article_id_by_url, update_article_dislikes, update_article_likes, get_dislike_count, get_like_count, get_top_articles
 from helpers.filter import filter_articles
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -164,3 +164,15 @@ def dislike_counts(url: str):
         int: The number of dislikes for the article
     """
     return get_dislike_count(url)
+
+
+@app.get("/top-articles")
+def top_articles_endpoint(limit: int):
+    """
+    Get the top articles based on likes.
+    Args:
+        limit (int): The number of top articles to return
+    Returns:
+        list: A list of top articles sorted by likes
+    """
+    return get_top_articles(limit)
