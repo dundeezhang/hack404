@@ -7,7 +7,6 @@ load_dotenv()
 
 
 def scan_website(url):
-    print(get_description(url))
     return read_website_content(get_description(url))
 
 
