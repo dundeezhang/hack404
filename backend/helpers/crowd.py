@@ -45,7 +45,7 @@ def save_article_to_db_sync(article):
         result = supabase.table("articles").insert(article_data).execute()
         return result.data[0]["id"] if result.data else None
         
-    except Exception as e:
+    except:
         return None
 
 def save_articles_batch(articles):
@@ -73,7 +73,7 @@ def get_article_id_by_url(article_url):
         result = supabase.table("articles").select("id").eq("link", article_url).execute()
         return result.data[0]["id"]
         
-    except Exception as e:
+    except:
         return None
 
 def update_article_likes(article_url, increment: bool):
@@ -99,7 +99,7 @@ def update_article_likes(article_url, increment: bool):
         else:
             return None
             
-    except Exception as e:
+    except:
         return None
 
 def update_article_dislikes(article_url, increment: bool):
@@ -125,5 +125,5 @@ def update_article_dislikes(article_url, increment: bool):
         else:
             return None
             
-    except Exception as e:
+    except:
         return None
