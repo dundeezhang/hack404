@@ -1,7 +1,81 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { Article } from "../types";
-import { faClock } from "@fortawesome/free-solid-svg-icons";
-const NewsCard = ({ article }: { article?: Article }) => {
+import {
+  faCaretDown,
+  faCaretUp,
+  faClock,
+  faThumbsDown,
+  faThumbsUp,
+} from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "react";
+
+const API_BASE_URL = "http://localhost:8000";
+const NewsCard = ({ article }: { article: Article }) => {
+  // Total number
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
+  // Whether the user has liked or not
+  const [liked, setLiked] = useState(false);
+  const [disliked, setDisliked] = useState(false);
+
+  const getLikes = async () => {
+    fetch(`${API_BASE_URL}/like-counts?url=${article.url}`)
+      .then((res: Response) => res.json())
+      .then((data: any) => {
+        console.log("like count",data);
+        setLikes(data);
+      })
+      .catch((err: any) => console.error("Error:", err));
+
+    fetch(`${API_BASE_URL}/dislike-counts?url=${article.url}`)
+      .then((res: Response) => res.json())
+      .then((data: any) => {
+        console.log("dislike count",data);
+
+        setDislikes(data);
+      })
+      .catch((err: any) => console.error("Error:", err));
+  };
+
+  useEffect(() => {
+    const fetchLikes = async () => {
+      try {
+        await getLikes();
+        console.log("liked", liked, likes, "disliked", disliked, dislikes)
+        
+      } catch (err) {
+        console.error("Error fetching likes/dislikes:", err);
+      }
+    };
+    fetchLikes();
+  }, [liked, disliked]);
+
+  const updateLikes = async (like: boolean) => {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/update-likes?url=${article.url}&increment=${like}`
+      );
+      setLiked(!liked);
+
+      // const data = await res.json();
+    } catch (error) {
+      console.error("Error updating likes:", error);
+    }
+  };
+  const updateDislikes = async (dislike: boolean) => {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/update-dislikes?url=${article.url}&increment=${dislike}`
+      );
+      setDisliked(!disliked);
+
+
+      // const data = await res.json();
+    } catch (error) {
+      console.error("Error updating likes:", error);
+    }
+  };
+
   return (
     <a href={article?.url} target="_blank" rel="noopener noreferrer">
       <div
@@ -80,6 +154,39 @@ const NewsCard = ({ article }: { article?: Article }) => {
             >
               <p className="text-[#A9927D] text-sm">sports</p>
             </div>
+          </div>
+          <div className="flex flex-row gap-3 mt-3">
+            <button
+              className="flex flex-row gap-2"
+              onClick={(e) => {
+                e.preventDefault();
+                updateLikes(liked);
+                // setLiked(!liked);
+              }}
+            >
+              <FontAwesomeIcon
+                className="my-auto"
+                icon={faCaretUp}
+                color={liked ? "#7DB8AF" : "#8A8A8A"}
+              />
+              <p className="text-[#8A8A8A]">{likes}</p>
+            </button>
+            <button
+              className="flex flex-row gap-2"
+              onClick={(e) => {
+                e.preventDefault();
+                updateDislikes(disliked);
+                // setDisliked(!disliked);
+              }}
+            >
+              <FontAwesomeIcon
+                className="my-auto"
+                icon={faCaretDown}
+                color={disliked ? "#7DB8AF" : "#8A8A8A"}
+              />
+              <p className="text-[#8A8A8A]">{dislikes}</p>
+              {dislikes}
+            </button>
           </div>
         </div>
       </div>
