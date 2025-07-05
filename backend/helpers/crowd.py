@@ -26,10 +26,20 @@ def save_article_to_db_sync(article):
         if existing.data:
             return existing.data[0]["id"]
         
+        # Extract article data from the article object
+        article_title = article.get("title", "")
+        article_author = article.get("author", "")
+        article_date = article.get("publishedAt")
+        article_publisher = article.get("source", {}).get("name", "")
+        
         article_data = {
             "link": article_url,
             "likes": 0,
-            "dislikes": 0
+            "dislikes": 0,
+            "tags": "",
+            "title": article_title,
+            "author": article_author or article_publisher,
+            "date_written": article_date
         }
         
         result = supabase.table("articles").insert(article_data).execute()
@@ -61,18 +71,7 @@ def get_article_id_by_url(article_url):
             return None
         
         result = supabase.table("articles").select("id").eq("link", article_url).execute()
-        
-        if result.data:
-            return result.data[0]["id"]
-        
-        article_data = {
-            "link": article_url,
-            "likes": 0,
-            "dislikes": 0
-        }
-        
-        insert_result = supabase.table("articles").insert(article_data).execute()
-        return insert_result.data[0]["id"] if insert_result.data else None
+        return result.data[0]["id"]
         
     except Exception as e:
         return None
@@ -82,7 +81,6 @@ def update_article_likes(article_url, increment: bool):
         if not article_url:
             return None
         
-        # Get article ID from URL
         article_id = get_article_id_by_url(article_url)
         if not article_id:
             return None
@@ -109,7 +107,6 @@ def update_article_dislikes(article_url, increment: bool):
         if not article_url:
             return None
         
-        # Get article ID from URL
         article_id = get_article_id_by_url(article_url)
         if not article_id:
             return None
