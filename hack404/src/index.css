@@ -1,5 +1,7 @@
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Alice&family=Alumni+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Alice&display=swap');
+@import '../public/fonts.css';
+
 
 :root {
   /* font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; */
@@ -23,7 +25,7 @@ h2 {
 }
 
 p {
-font-family: "Alumni Sans", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;}
+  /* font-family: "Alumni Sans", sans-serif;
+  font-optical-sizing: auto; */
+  /* font-weight: 200; */
+}
