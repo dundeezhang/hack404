@@ -1,7 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Alice&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Alice&display=swap");
 @import "tailwindcss";
-/* @import '../fonts.css'; */
-
+@import "../public/fonts.css";
 
 :root {
   /* font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; */

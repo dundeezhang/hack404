@@ -33,7 +33,7 @@ def get_articles():
                     "first": article.get('author', '').split()[0] if article.get('author') else '',
                     "last": ' '.join(article.get('author', '').split()[1:]) if article.get('author') else '',
                 },
-                "date": article.get('publishedAt', ''),
+                "date": article.get('date', ''),
                 "filters": [category],
             })
         return jsonify(articles)

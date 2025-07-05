@@ -3,9 +3,9 @@ import {
   faArrowUpRightFromSquare,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { RankedArticles } from "../types";
+import type { ApiCall } from "../types";
 
-const HenYang = ({ articles }: { articles?: RankedArticles }) => {
+const HenYang = ({ articles }: { articles?: ApiCall }) => {
   return (
     <div className="w-[250px] bg-white rounded-3xl shadow-md p-3 self-start sticky top-[160px] z-10">
       <div className="flex flex-row rounded-3xl gap-3">
