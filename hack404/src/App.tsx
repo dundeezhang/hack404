@@ -15,10 +15,11 @@ function CategoryArticles() {
 
   // Default to "general" if no category in URL
   const selectedCategory = category ? category.toLowerCase() : "general";
+const API_BASE_URL = "http://localhost:8000";
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:8000/news?category=${selectedCategory}`)
+    fetch(`${API_BASE_URL}/news?category=${selectedCategory}`)
       .then((res) => res.json())
       .then((data) => {
         const formattedArticles = data.articles.map((article: any) => ({
