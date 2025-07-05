@@ -198,7 +198,7 @@ def generate_article_tags(body: str):
         word_lower = word.lower()
         tag_keywords = {
             "science": ["science"],
-            "technology": ["tech", "technology, technologies", "technological"],
+            "technology": ["tech", "technology", "technologies", "technological"],
             "health": ["health"],
             "business": ["business"],
             "entertainment": ["entertainment"],
