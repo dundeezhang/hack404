@@ -38,322 +38,66 @@ def filter_articles(articles, ignore_list, search_list):
 def use_the_api_better():
     return {"get better": "dundee"}
 
+@app.get("/news")
+def get_news_by_category(category: str = "general", ignore: str = "", search: str = ""):
+    """
+    Get news from NewsAPI by category with filtering by categories and options
+    
+    Args:
+        category: News category (default: "general")
+                 Available categories: business, entertainment, general, health, science, sports, technology
+        ignore: Comma-separated keywords to filter OUT from articles (default: "")
+        search: Comma-separated keywords to filter IN - articles must contain at least one (default: "")
+    
+    Returns:
+        JSON response with filtered news articles
+    """
+    api_key = os.getenv("NEWSAPI_KEY")
+    
+    if not api_key:
+        raise HTTPException(status_code=500, detail="NewsAPI key not configured")
+    
+    # Validate category
+    valid_categories = ["business", "entertainment", "general", "health", "science", "sports", "technology"]
+    if category not in valid_categories:
+        raise HTTPException(status_code=400, detail=f"Invalid category. Must be one of: {', '.join(valid_categories)}")
+    
+    ignore_list = [keyword.strip() for keyword in ignore.split(",") if keyword.strip()]
+    search_list = [keyword.strip() for keyword in search.split(",") if keyword.strip()]
+    
+    url = "https://newsapi.org/v2/top-headlines"
+    
+    params = {
+        "apiKey": api_key,
+        "pageSize": 100,
+        "country": "us",
+        "category": category,
+        "language": "en" 
+    }
+    
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        
+        news_data = response.json()
+        
+        filtered_articles = filter_articles(news_data.get("articles", []), ignore_list, search_list)
+        
+        return {
+            "status": "success",
+            "category": category,
+            "totalResults": len(filtered_articles),
+            "originalTotalResults": news_data.get("totalResults", 0),
+            "articles": filtered_articles
+        }
+        
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching {category} news: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+# Legacy endpoint for backward compatibility
 @app.get("/get")
 def get_news(ignore: str = "", search: str = ""):
-    api_key = os.getenv("NEWSAPI_KEY")
-    
-    if not api_key:
-        raise HTTPException(status_code=500, detail="NewsAPI key not configured")
-    
-    ignore_list = [keyword.strip() for keyword in ignore.split(",") if keyword.strip()]
-    search_list = [keyword.strip() for keyword in search.split(",") if keyword.strip()]
-    
-    url = "https://newsapi.org/v2/top-headlines"
-    
-    params = {
-        "apiKey": api_key,
-        "pageSize": 100,
-        "country" : "us",
-        "category": "general",
-        "language": "en" 
-    }
-    
-    try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        
-        news_data = response.json()
-        
-        filtered_articles = filter_articles(news_data.get("articles", []), ignore_list, search_list)
-        
-        return {
-            "status": "success",
-            "totalResults": len(filtered_articles),
-            "originalTotalResults": news_data.get("totalResults", 0),
-            "articles": filtered_articles
-        }
-        
-    except requests.exceptions.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching news: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-@app.get("/get_business")
-def get_business(ignore: str = "", search: str = ""):
-    api_key = os.getenv("NEWSAPI_KEY")
-    
-    if not api_key:
-        raise HTTPException(status_code=500, detail="NewsAPI key not configured")
-    
-    ignore_list = [keyword.strip() for keyword in ignore.split(",") if keyword.strip()]
-    search_list = [keyword.strip() for keyword in search.split(",") if keyword.strip()]
-    
-    url = "https://newsapi.org/v2/top-headlines"
-    
-    params = {
-        "apiKey": api_key,
-        "pageSize": 100,
-        "country": "us",
-        "category": "business",
-        "language": "en" 
-    }
-    
-    try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        
-        news_data = response.json()
-        
-        filtered_articles = filter_articles(news_data.get("articles", []), ignore_list, search_list)
-        
-        return {
-            "status": "success",
-            "totalResults": len(filtered_articles),
-            "originalTotalResults": news_data.get("totalResults", 0),
-            "articles": filtered_articles
-        }
-        
-    except requests.exceptions.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching business news: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-@app.get("/get_entertainment")
-def get_entertainment(ignore: str = "", search: str = ""):
-    api_key = os.getenv("NEWSAPI_KEY")
-    
-    if not api_key:
-        raise HTTPException(status_code=500, detail="NewsAPI key not configured")
-    
-    ignore_list = [keyword.strip() for keyword in ignore.split(",") if keyword.strip()]
-    search_list = [keyword.strip() for keyword in search.split(",") if keyword.strip()]
-    
-    url = "https://newsapi.org/v2/top-headlines"
-    
-    params = {
-        "apiKey": api_key,
-        "pageSize": 100,
-        "country": "us",
-        "category": "entertainment",
-        "language": "en" 
-    }
-    
-    try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        
-        news_data = response.json()
-        
-        filtered_articles = filter_articles(news_data.get("articles", []), ignore_list, search_list)
-        
-        return {
-            "status": "success",
-            "totalResults": len(filtered_articles),
-            "originalTotalResults": news_data.get("totalResults", 0),
-            "articles": filtered_articles
-        }
-        
-    except requests.exceptions.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching entertainment news: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-@app.get("/get_general")
-def get_general(ignore: str = "", search: str = ""):
-    api_key = os.getenv("NEWSAPI_KEY")
-    
-    if not api_key:
-        raise HTTPException(status_code=500, detail="NewsAPI key not configured")
-    
-    ignore_list = [keyword.strip() for keyword in ignore.split(",") if keyword.strip()]
-    search_list = [keyword.strip() for keyword in search.split(",") if keyword.strip()]
-    
-    url = "https://newsapi.org/v2/top-headlines"
-    
-    params = {
-        "apiKey": api_key,
-        "pageSize": 100,
-        "country": "us",
-        "category": "general",
-        "language": "en" 
-    }
-    
-    try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        
-        news_data = response.json()
-        
-        filtered_articles = filter_articles(news_data.get("articles", []), ignore_list, search_list)
-        
-        return {
-            "status": "success",
-            "totalResults": len(filtered_articles),
-            "originalTotalResults": news_data.get("totalResults", 0),
-            "articles": filtered_articles
-        }
-        
-    except requests.exceptions.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching general news: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-@app.get("/get_health")
-def get_health(ignore: str = "", search: str = ""):
-    api_key = os.getenv("NEWSAPI_KEY")
-    
-    if not api_key:
-        raise HTTPException(status_code=500, detail="NewsAPI key not configured")
-    
-    ignore_list = [keyword.strip() for keyword in ignore.split(",") if keyword.strip()]
-    search_list = [keyword.strip() for keyword in search.split(",") if keyword.strip()]
-    
-    url = "https://newsapi.org/v2/top-headlines"
-    
-    params = {
-        "apiKey": api_key,
-        "pageSize": 100,
-        "country": "us",
-        "category": "health",
-        "language": "en" 
-    }
-    
-    try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        
-        news_data = response.json()
-        
-        filtered_articles = filter_articles(news_data.get("articles", []), ignore_list, search_list)
-        
-        return {
-            "status": "success",
-            "totalResults": len(filtered_articles),
-            "originalTotalResults": news_data.get("totalResults", 0),
-            "articles": filtered_articles
-        }
-        
-    except requests.exceptions.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching health news: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-@app.get("/get_science")
-def get_science(ignore: str = "", search: str = ""):
-    api_key = os.getenv("NEWSAPI_KEY")
-    
-    if not api_key:
-        raise HTTPException(status_code=500, detail="NewsAPI key not configured")
-    
-    ignore_list = [keyword.strip() for keyword in ignore.split(",") if keyword.strip()]
-    search_list = [keyword.strip() for keyword in search.split(",") if keyword.strip()]
-    
-    url = "https://newsapi.org/v2/top-headlines"
-    
-    params = {
-        "apiKey": api_key,
-        "pageSize": 100,
-        "country": "us",
-        "category": "science",
-        "language": "en" 
-    }
-    
-    try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        
-        news_data = response.json()
-        
-        filtered_articles = filter_articles(news_data.get("articles", []), ignore_list, search_list)
-        
-        return {
-            "status": "success",
-            "totalResults": len(filtered_articles),
-            "originalTotalResults": news_data.get("totalResults", 0),
-            "articles": filtered_articles
-        }
-        
-    except requests.exceptions.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching science news: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-@app.get("/get_sports")
-def get_sports(ignore: str = "", search: str = ""):
-    api_key = os.getenv("NEWSAPI_KEY")
-    
-    if not api_key:
-        raise HTTPException(status_code=500, detail="NewsAPI key not configured")
-    
-    ignore_list = [keyword.strip() for keyword in ignore.split(",") if keyword.strip()]
-    search_list = [keyword.strip() for keyword in search.split(",") if keyword.strip()]
-    
-    url = "https://newsapi.org/v2/top-headlines"
-    
-    params = {
-        "apiKey": api_key,
-        "pageSize": 100,
-        "country": "us",
-        "category": "sports",
-        "language": "en" 
-    }
-    
-    try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        
-        news_data = response.json()
-        
-        filtered_articles = filter_articles(news_data.get("articles", []), ignore_list, search_list)
-        
-        return {
-            "status": "success",
-            "totalResults": len(filtered_articles),
-            "originalTotalResults": news_data.get("totalResults", 0),
-            "articles": filtered_articles
-        }
-        
-    except requests.exceptions.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching sports news: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-@app.get("/get_technology")
-def get_technology(ignore: str = "", search: str = ""):
-    api_key = os.getenv("NEWSAPI_KEY")
-    
-    if not api_key:
-        raise HTTPException(status_code=500, detail="NewsAPI key not configured")
-    
-    ignore_list = [keyword.strip() for keyword in ignore.split(",") if keyword.strip()]
-    search_list = [keyword.strip() for keyword in search.split(",") if keyword.strip()]
-    
-    url = "https://newsapi.org/v2/top-headlines"
-    
-    params = {
-        "apiKey": api_key,
-        "pageSize": 100,
-        "country": "us",
-        "category": "technology",
-        "language": "en" 
-    }
-    
-    try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        
-        news_data = response.json()
-        
-        filtered_articles = filter_articles(news_data.get("articles", []), ignore_list, search_list)
-        
-        return {
-            "status": "success",
-            "totalResults": len(filtered_articles),
-            "originalTotalResults": news_data.get("totalResults", 0),
-            "articles": filtered_articles
-        }
-        
-    except requests.exceptions.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching technology news: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+    """Legacy endpoint - use /news instead"""
+    return get_news_by_category("general", ignore, search)
